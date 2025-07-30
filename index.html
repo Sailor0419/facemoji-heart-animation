@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>抖动爱心</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            background-color: #f0f0f0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+        
+        .container {
+            position: relative;
+            display: inline-block;
+        }
+        
+        .phone-mockup {
+            width: 320px;
+            height: 640px;
+            background: linear-gradient(to bottom, #f8f8f8, #e8e8e8);
+            border-radius: 25px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+        
+        .status-bar {
+            height: 35px;
+            background: #000;
+            border-radius: 25px 25px 0 0;
+            display: flex;
+            align-items: center;
+            padding: 0 20px;
+            color: white;
+            font-size: 14px;
+            justify-content: space-between;
+        }
+        
+        .messages-area {
+            padding: 20px;
+            height: 350px;
+            background: white;
+        }
+        
+        .user-info {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .avatar {
+            width: 50px;
+            height: 50px;
+            background: #ccc;
+            border-radius: 50%;
+            margin: 0 auto 10px;
+        }
+        
+        .message-bubble {
+            margin: 15px 0;
+        }
+        
+        .message-content {
+            background: #007AFF;
+            color: white;
+            padding: 10px 15px;
+            border-radius: 15px;
+            margin-left: 50px;
+            display: inline-block;
+            max-width: 200px;
+        }
+        
+        .message-content.green {
+            background: #4CD964;
+            margin-left: 100px;
+        }
+        
+        .delivery-status {
+            text-align: right;
+            color: #ff6b6b;
+            font-size: 12px;
+            margin-top: 5px;
+        }
+        
+        .emoji-section {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 250px;
+            background: #f8f8f8;
+            padding: 20px;
+        }
+        
+        .emoji-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .emoji {
+            font-size: 28px;
+            text-align: center;
+            cursor: pointer;
+        }
+        
+        /* 抖动动画 */
+        .shake-heart-1 {
+            animation: shakeHeart1 1.2s ease-in-out infinite;
+        }
+        
+        .shake-heart-2 {
+            animation: shakeHeart2 1.5s ease-in-out infinite;
+        }
+        
+        .shake-heart-3 {
+            animation: pulseHeart 1.8s ease-in-out infinite;
+        }
+        
+        @keyframes shakeHeart1 {
+            0%, 100% { 
+                transform: rotate(0deg) scale(1); 
+            }
+            25% { 
+                transform: rotate(-8deg) scale(1.1) translateX(-2px); 
+            }
+            75% { 
+                transform: rotate(8deg) scale(1.1) translateX(2px); 
+            }
+        }
+        
+        @keyframes shakeHeart2 {
+            0%, 100% { 
+                transform: translateY(0) scale(1); 
+            }
+            25% { 
+                transform: translateY(-8px) scale(1.2); 
+            }
+            50% { 
+                transform: translateY(4px) scale(0.9); 
+            }
+            75% { 
+                transform: translateY(-4px) scale(1.1); 
+            }
+        }
+        
+        @keyframes pulseHeart {
+            0%, 100% { 
+                transform: scale(1); 
+                opacity: 0.8;
+            }
+            50% { 
+                transform: scale(1.4); 
+                opacity: 1;
+                filter: drop-shadow(0 0 10px #ff69b4);
+            }
+        }
+        
+        .instructions {
+            position: absolute;
+            top: -80px;
+            left: 0;
+            right: 0;
+            text-align: center;
+            color: #666;
+        }
+        
+        .emoji:hover {
+            transform: scale(1.2);
+            transition: transform 0.2s;
+        }
+        
+        /* 弹窗样式 */
+        .modal-overlay {
+            display: none;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            animation: fadeIn 0.3s ease-out;
+            border-radius: 0;
+        }
+        
+        .modal-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            border-radius: 10px;
+            padding: 10px;
+            width: 240px;
+            max-height: 200px;
+            overflow-y: auto;
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.4);
+            text-align: center;
+            animation: slideInFromBottom 0.3s ease-out;
+        }
+        
+        .modal-header {
+            margin-bottom: 20px;
+        }
+        
+        .modal-title {
+            font-size: 14px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 4px;
+        }
+        
+        .modal-emoji {
+            font-size: 20px;
+            margin: 4px 0;
+            animation: heartBeat 1.5s ease-in-out infinite;
+        }
+        
+        .modal-text {
+            font-size: 11px;
+            color: #666;
+            line-height: 1.3;
+            margin: 6px 0;
+        }
+        
+        .modal-input {
+            width: 100%;
+            padding: 6px;
+            border: 1px solid #e0e0e0;
+            border-radius: 5px;
+            font-size: 12px;
+            margin: 6px 0;
+            box-sizing: border-box;
+            transition: border-color 0.3s;
+            resize: none;
+            min-height: 45px;
+        }
+        
+        .modal-input:focus {
+            outline: none;
+            border-color: #ff69b4;
+        }
+        
+        .modal-buttons {
+            display: flex;
+            gap: 6px;
+            margin-top: 8px;
+        }
+        
+        .modal-button {
+            flex: 1;
+            padding: 8px 10px;
+            border: none;
+            border-radius: 5px;
+            font-size: 12px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .modal-button.primary {
+            background: linear-gradient(45deg, #ff69b4, #ff1493);
+            color: white;
+        }
+        
+        .modal-button.primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 105, 180, 0.4);
+        }
+        
+        .modal-button.secondary {
+            background: #f0f0f0;
+            color: #666;
+        }
+        
+        .modal-button.secondary:hover {
+            background: #e0e0e0;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        @keyframes slideInFromBottom {
+            from { 
+                opacity: 0;
+                transform: translate(-50%, -30%) scale(0.9);
+            }
+            to { 
+                opacity: 1;
+                transform: translate(-50%, -50%) scale(1);
+            }
+        }
+        
+        @keyframes heartBeat {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+        
+        .success-message {
+            display: none;
+            background: linear-gradient(45deg, #4CAF50, #45a049);
+            color: white;
+            padding: 8px;
+            border-radius: 5px;
+            margin: 6px 0;
+            font-size: 12px;
+            line-height: 1.2;
+            animation: slideDown 0.3s ease-out;
+        }
+        
+        @keyframes slideDown {
+            from { 
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to { 
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="instructions">
+            <h3>🎉 发现隐藏福利 🎉</h3>
+            <p>底部表情区域中的爱心正在抖动！点击爱心发现隐藏福利</p>
+        </div>
+        
+        <div class="phone-mockup">
+            <!-- 状态栏 -->
+            <div class="status-bar">
+                <span>7:33 😊</span>
+                <span>📶 🔋</span>
+            </div>
+            
+            <!-- 消息区域 -->
+            <div class="messages-area">
+                <div class="user-info">
+                    <div class="avatar"></div>
+                    <div>20431</div>
+                </div>
+                
+                <div class="message-bubble">
+                    <div class="message-content">🖤BLACKPINK💗 ~ღ G☮T7 ☮~</div>
+                    <div class="delivery-status">Not Delivered</div>
+                </div>
+                
+                <div class="message-bubble">
+                    <div class="message-content green">Church</div>
+                    <div class="delivery-status">Not Delivered</div>
+                </div>
+            </div>
+            
+            <!-- 表情区域 -->
+            <div class="emoji-section">
+                <div class="emoji-grid">
+                    <span class="emoji shake-heart-1">💖</span>
+                    <span class="emoji">🧸</span>
+                    <span class="emoji">😂</span>
+                    <span class="emoji">🐱</span>
+                    <span class="emoji">🌸</span>
+                    <span class="emoji">☁️</span>
+                    <span class="emoji">💕</span>
+                </div>
+                
+                <div class="emoji-grid">
+                    <span class="emoji">💝</span>
+                    <span class="emoji">💌</span>
+                    <span class="emoji shake-heart-2">💕</span>
+                    <span class="emoji">💖</span>
+                    <span class="emoji">🎀</span>
+                    <span class="emoji shake-heart-3">💜</span>
+                    <span class="emoji">💎</span>
+                </div>
+                
+                <div class="emoji-grid">
+                    <span class="emoji">🖤</span>
+                    <span class="emoji">🧸</span>
+                    <span class="emoji">🐱</span>
+                    <span class="emoji">🔥</span>
+                    <span class="emoji">🌹</span>
+                    <span class="emoji">🎂</span>
+                    <span class="emoji">🍓</span>
+                </div>
+                
+                <div style="margin-top: 20px; color: #999; font-size: 12px; text-align: center;">
+                    Instamoji
+                </div>
+                
+                <!-- 弹窗 -->
+                <div class="modal-overlay" id="fanModal">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <div class="modal-title">🎉 恭喜你发现了隐藏福利！</div>
+                            <div class="modal-emoji" id="modalEmoji">💖</div>
+                        </div>
+                        <div class="modal-text">
+                            是什么让你成为我们的Fans？Genmoji？Kaomoji？Text Art？把你最爱的功能发TikTok并@Facemojikeyboard，超过300观看量就能获得免费会员！
+                        </div>
+                        <textarea 
+                            class="modal-input" 
+                            id="fanReason" 
+                            placeholder="我会展示Facemoji的___功能，因为..."
+                            rows="2"
+                        ></textarea>
+                        <div class="success-message" id="successMessage">
+                            🎉 记得@Facemojikeyboard哦！期待你的精彩视频！
+                        </div>
+                        <div class="modal-buttons">
+                            <button class="modal-button secondary" onclick="closeModal()">稍后参与</button>
+                            <button class="modal-button primary" onclick="submitFanReason()">立即制作</button>
+                        </div>
+                    </div>
+                </div>
+        </div>
+    </div>
+    
+    <script>
+        // 获取弹窗元素
+        const modal = document.getElementById('fanModal');
+        const modalEmoji = document.getElementById('modalEmoji');
+        const fanReasonInput = document.getElementById('fanReason');
+        const successMessage = document.getElementById('successMessage');
+        
+        // 点击爱心时的处理函数
+        document.querySelectorAll('.emoji').forEach(emoji => {
+            emoji.addEventListener('click', function() {
+                // 检查是否是动态爱心（有动画类的爱心）
+                if (this.classList.contains('shake-heart-1') || 
+                    this.classList.contains('shake-heart-2') || 
+                    this.classList.contains('shake-heart-3')) {
+                    
+                    // 显示弹窗
+                    showModal(this.textContent);
+                } else {
+                    // 普通表情的动画效果
+                    this.style.animation = 'none';
+                    setTimeout(() => {
+                        this.style.animation = '';
+                    }, 100);
+                }
+            });
+        });
+        
+        // 显示弹窗函数
+        function showModal(heartEmoji) {
+            modalEmoji.textContent = heartEmoji;
+            modal.style.display = 'block';
+            
+            // 重置表单
+            fanReasonInput.value = '';
+            successMessage.style.display = 'none';
+            
+            // 聚焦到输入框
+            setTimeout(() => {
+                fanReasonInput.focus();
+            }, 300);
+        }
+        
+        // 关闭弹窗函数
+        function closeModal() {
+            modal.style.display = 'none';
+        }
+        
+        // 提交隐藏福利申请函数
+        function submitFanReason() {
+            const videoIdea = fanReasonInput.value.trim();
+            
+            if (videoIdea === '') {
+                alert('请先描述你要展示的Facemoji功能～');
+                fanReasonInput.focus();
+                return;
+            }
+            
+            // 显示成功消息
+            successMessage.style.display = 'block';
+            fanReasonInput.style.display = 'none';
+            
+            // 模拟提交过程
+            console.log('用户的隐藏福利申请：', videoIdea);
+            
+            // 3秒后自动关闭弹窗
+            setTimeout(() => {
+                closeModal();
+                fanReasonInput.style.display = 'block';
+                // 可以在这里添加跳转到TikTok的逻辑
+                // window.open('https://www.tiktok.com/create', '_blank');
+            }, 3000);
+        }
+        
+        // 点击弹窗背景关闭弹窗
+        modal.addEventListener('click', function(e) {
+            if (e.target === modal) {
+                closeModal();
+            }
+        });
+        
+        // ESC键关闭弹窗
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' && modal.style.display === 'block') {
+                closeModal();
+            }
+        });
+        
+        // 更新说明文字
+        document.querySelector('.instructions p').textContent = '底部表情区域中的爱心正在抖动！点击动态爱心发现隐藏福利';
+    </script>
+</body>
+</html> 
