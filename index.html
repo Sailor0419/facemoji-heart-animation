@@ -448,9 +448,9 @@
                 
                 <div class="emoji-grid">
                     <span class="emoji twinkle-star">✨</span>
-                    <span class="emoji twinkle-star">🌟</span>
-                    <span class="emoji twinkle-star">💫</span>
-                    <span class="emoji twinkle-star">⭐</span>
+                    <span class="emoji">🌟</span>
+                    <span class="emoji">💫</span>
+                    <span class="emoji">⭐</span>
                     <span class="emoji">🌙</span>
                     <span class="emoji">☀️</span>
                     <span class="emoji rotate-rainbow">🌈</span>
@@ -458,10 +458,10 @@
                 
                 <div class="emoji-grid">
                     <span class="emoji bounce-cake">🍰</span>
-                    <span class="emoji bounce-cake">🍦</span>
+                    <span class="emoji">🍦</span>
                     <span class="emoji">🍭</span>
                     <span class="emoji">🍪</span>
-                    <span class="emoji bounce-cake">🍩</span>
+                    <span class="emoji">🍩</span>
                     <span class="emoji">🍫</span>
                     <span class="emoji">🍬</span>
                 </div>
@@ -501,13 +501,16 @@
         const fanReasonInput = document.getElementById('fanReason');
         const successMessage = document.getElementById('successMessage');
         
-        // 点击爱心时的处理函数
+        // 点击emoji时的处理函数
         document.querySelectorAll('.emoji').forEach(emoji => {
             emoji.addEventListener('click', function() {
-                // 检查是否是动态爱心（有动画类的爱心）
+                // 检查是否是动态emoji（有动画类的emoji）
                 if (this.classList.contains('shake-heart-1') || 
                     this.classList.contains('shake-heart-2') || 
-                    this.classList.contains('shake-heart-3')) {
+                    this.classList.contains('shake-heart-3') ||
+                    this.classList.contains('twinkle-star') ||
+                    this.classList.contains('bounce-cake') ||
+                    this.classList.contains('rotate-rainbow')) {
                     
                     // 显示弹窗
                     showModal(this.textContent);
